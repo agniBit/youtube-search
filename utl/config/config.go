@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -33,7 +34,7 @@ type ( // Configuration holds data necessary for configuring application
 	}
 
 	Youtube struct {
-		APIKey string `yaml:"api_key,omitempty"`
+		APIKeys []string `yaml:"api_key,omitempty"`
 	}
 
 	Cron struct {
@@ -78,9 +79,14 @@ func Load(path string) (*Configuration, error) {
 		config.Server.Debug = d
 	}
 
-	youtubeApiKey := os.Getenv("YOUTUBE_API_KEY")
+	youtubeApiKey := os.Getenv("YOUTUBE_API_KEYS")
 	if youtubeApiKey != "" {
-		config.Youtube.APIKey = youtubeApiKey
+		keys := strings.Split(youtubeApiKey, ",")
+		if config.Youtube == nil {
+			config.Youtube = &Youtube{APIKeys: keys}
+		} else {
+			config.Youtube.APIKeys = keys
+		}
 	} else {
 		return nil, fmt.Errorf("youtube api key is not set")
 	}

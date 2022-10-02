@@ -1,6 +1,8 @@
 package yt_repository
 
 import (
+	"context"
+
 	"github.com/agniBit/youtube-search/pkg/youtube"
 	"github.com/agniBit/youtube-search/type/common"
 	youtubeType "github.com/agniBit/youtube-search/type/youtube"
@@ -28,4 +30,8 @@ func (r *repository) FindVideosByVideoName(search *youtubeType.SearchFilter, off
 
 	err := q.Find(&videos).Order("published_at DESC").Error
 	return videos, err
+}
+
+func (r *repository) SaveYoutubeVideos(ctx context.Context, videos []*youtube.YoutubeVideo) error {
+	return r.db.WithContext(ctx).Create(&videos).Error
 }

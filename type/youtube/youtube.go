@@ -8,7 +8,7 @@ import (
 
 type (
 	Service interface {
-		FetchNewYoutubeVideos(crx context.Context) error
+		FetchNewYoutubeVideos(crx context.Context, search string) error
 		SearchYoutubeVideosByName(ctx context.Context, search *SearchFilter, offsetLimit *common.OffsetLimit) ([]*YoutubeVideo, error)
 	}
 

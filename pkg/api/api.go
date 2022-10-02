@@ -1,7 +1,12 @@
 package api
 
 import (
+	"context"
+	"log"
+
 	"github.com/labstack/echo/v4"
+	"google.golang.org/api/option"
+	yt "google.golang.org/api/youtube/v3"
 
 	"github.com/agniBit/youtube-search/pkg/gateway"
 	"github.com/agniBit/youtube-search/pkg/gateway/transport"
@@ -25,11 +30,17 @@ func Start(configPath string) error {
 		return err
 	}
 
+	// init youtube client
+	ytService, err := yt.NewService(context.Background(), option.WithAPIKey(cfg.Youtube.APIKeys[0])) // use first key on initialization
+	if err != nil {
+		log.Fatalf("Error creating new YouTube client: %v", err)
+	}
+
 	// initialize youtube repository
-	youtuebRepo := yt_repository.NewYoutubeRepository(db)
+	youtubeRepo := yt_repository.NewYoutubeRepository(db)
 
 	// Initialize youtube service
-	yt := youtube.New(youtuebRepo, cfg)
+	yt := youtube.New(youtubeRepo, cfg, ytService)
 
 	// Initialize gateway service
 	gw := gateway.New(yt)

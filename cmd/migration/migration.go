@@ -48,7 +48,10 @@ func runMigration(db *gorm.DB) {
 	err := db.Exec("CREATE SCHEMA IF NOT EXISTS youtube").Error
 	utils.CheckErr(err)
 
-	err = db.AutoMigrate(&youtube.YoutubeVideo{})
+	err = db.AutoMigrate(
+		&youtube.YoutubeVideo{},
+		&youtube.YoutubeVideoThumbnails{},
+	)
 	if err != nil {
 		utils.CheckErr(err)
 	}

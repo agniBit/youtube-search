@@ -9,9 +9,6 @@ server:
   debug: true
   timeout_seconds: 30
 
-youtube:
-  YOUTUBE_API_KEY: <YOUTUBE_API_KEY>
-
 cron:
   youtube:
     fetch_new_videos_interval: 10

@@ -2,8 +2,11 @@ package job
 
 import (
 	"context"
+	"log"
 
 	"github.com/robfig/cron/v3"
+	"google.golang.org/api/option"
+	yt "google.golang.org/api/youtube/v3"
 
 	"github.com/agniBit/youtube-search/pkg/job/youtube"
 	youtubeS "github.com/agniBit/youtube-search/pkg/youtube"
@@ -25,8 +28,14 @@ func Start(configPath string) error {
 		return err
 	}
 
+	// init youtube client
+	ytService, err := yt.NewService(context.Background(), option.WithAPIKey(cfg.Youtube.APIKeys[0])) // use first key on initialization
+	if err != nil {
+		log.Fatalf("Error creating new YouTube client: %v", err)
+	}
+
 	// Initialize youtube service
-	ytS := youtubeS.New(yt_repository.NewYoutubeRepository(db), cfg)
+	ytS := youtubeS.New(yt_repository.NewYoutubeRepository(db), cfg, ytService)
 
 	// register cron job for fetching new videos from youtube
 	youtube.New(context.Background(), c, ytS, cfg.Cron)

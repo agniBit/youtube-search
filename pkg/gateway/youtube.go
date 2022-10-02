@@ -11,6 +11,6 @@ func (g GatewayService) SearchYoutubeVideosByName(ctx context.Context, search *y
 	return g.yt.SearchYoutubeVideosByName(ctx, search, offsetLimit)
 }
 
-func (g GatewayService) FetchNewYoutubeVideos(ctx context.Context) error {
-	return g.yt.FetchNewYoutubeVideos(ctx)
+func (g GatewayService) FetchNewYoutubeVideos(ctx context.Context, search string) error {
+	return g.yt.FetchNewYoutubeVideos(ctx, search)
 }

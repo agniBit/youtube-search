@@ -29,7 +29,7 @@ func New(ctx context.Context, cron *cron.Cron, ytS youtubeType.Service, cfg *con
 		for {
 			startTime := time.Now()
 			log.Printf("%s: fetching new youtube videos", source)
-			err := ytS.FetchNewYoutubeVideos(ctx)
+			err := ytS.FetchNewYoutubeVideos(ctx, "cricket")
 
 			if err != nil {
 				log.Printf("%s: error in sending growth and retention summary: %v", source, err)
