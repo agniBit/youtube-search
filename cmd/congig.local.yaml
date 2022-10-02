@@ -1,5 +1,5 @@
 database:
-  url_path: postgresql://youtubeDB:password@localhost/youtube?sslmode=disable
+  url_path: postgresql://fampay:password@localhost/fampay?sslmode=disable
   log_queries: true
   timeout_seconds: 30
   max_idle_conns: 10
