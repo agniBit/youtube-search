@@ -7,6 +7,7 @@ import (
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/agniBit/youtube-search/pkg/youtube"
 	utils "github.com/agniBit/youtube-search/utl/common"
@@ -24,6 +25,7 @@ func main() {
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDB,
 	}), &gorm.Config{
+		Logger:      logger.Default.LogMode(logger.Info),
 		PrepareStmt: true,
 	})
 	utils.CheckErr(err)
