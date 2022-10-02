@@ -18,7 +18,7 @@ func NewHTTP(svc gateway.Service, e *echo.Group) {
 	youtubeGrp := e.Group("/youtube")
 
 	// APIs
-	youtubeGrp.GET("/search", h.searchYoutubeVideos)
+	youtubeGrp.GET("/videos", h.searchYoutubeVideos)
 }
 
 func (h *HTTP) searchYoutubeVideos(c echo.Context) error {
