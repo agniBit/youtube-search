@@ -10,3 +10,7 @@ type (
 		PublishedAt  string `gorm:"not null"`
 	}
 )
+
+func (YoutubeVideo) TableName() string {
+	return "youtube.youtube_video"
+}

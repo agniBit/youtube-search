@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	"os"
 
 	_ "github.com/lib/pq"
@@ -10,7 +9,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/agniBit/youtube-search/pkg/youtube"
-	"github.com/agniBit/youtube-search/utl/common"
+	utils "github.com/agniBit/youtube-search/utl/common"
 )
 
 func main() {
@@ -20,17 +19,17 @@ func main() {
 	}
 
 	sqlDB, err := sql.Open("postgres", database_url)
-	checkErr(err)
+	utils.CheckErr(err)
 
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		Conn: sqlDB,
 	}), &gorm.Config{
 		PrepareStmt: true,
 	})
-	checkErr(err)
+	utils.CheckErr(err)
 
 	if err := db.Exec("SELECT 1").Error; err != nil {
-		checkErr(err)
+		utils.CheckErr(err)
 	}
 
 	runMigration(db)
@@ -41,17 +40,11 @@ func runMigration(db *gorm.DB) {
 
 	tx := db.Exec("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\"")
 	if err := tx.Error; err != nil {
-		checkErr(err)
+		utils.CheckErr(err)
 	}
 
 	err := db.AutoMigrate(&youtube.YoutubeVideo{})
 	if err != nil {
-		checkErr(err)
-	}
-}
-
-func checkErr(err error) {
-	if err != nil {
-		log.Fatal(err)
+		utils.CheckErr(err)
 	}
 }
