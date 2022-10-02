@@ -28,7 +28,7 @@ func (r *repository) FindVideosByVideoName(search *youtubeType.SearchFilter, off
 	// use offset and limit
 	postgres.Pagination(q, offsetLimit)
 
-	err := q.Find(&videos).Order("published_at DESC").Error
+	err := q.Preload("Thumbnails").Order("published_at DESC").Find(&videos).Error
 	return videos, err
 }
 

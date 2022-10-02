@@ -44,12 +44,6 @@ type (
 		Title                string
 	}
 
-	Thumbnail struct {
-		Height int
-		Url    string
-		Width  int
-	}
-
 	YoutubeVideoThumbnails struct {
 		ID             string `gorm:"default:('yvt_' || generate_uid(12))"`
 		ResolutionType ThumbnailType
