@@ -1,9 +1,31 @@
 package yt_repository
 
-import "github.com/agniBit/youtube-search/pkg/youtube"
+import (
+	"github.com/agniBit/youtube-search/pkg/youtube"
+	"github.com/agniBit/youtube-search/type/common"
+	youtubeType "github.com/agniBit/youtube-search/type/youtube"
+	"github.com/agniBit/youtube-search/utl/storage/postgres"
+)
 
-func (r *repository) FindVideosByVideoName(name string) ([]*youtube.YoutubeVideo, error) {
+func (r *repository) FindVideosByVideoName(search *youtubeType.SearchFilter, offsetLimit *common.OffsetLimit) ([]*youtube.YoutubeVideo, error) {
 	var videos []*youtube.YoutubeVideo
-	err := r.db.Where("title ILIKE ?", "%"+name+"%").Find(&videos).Error
+	q := r.db.Model(&youtube.YoutubeVideo{})
+
+	if search.Title != "" {
+		q = q.Where("title ILIKE ?", "%"+search.Title+"%")
+	}
+
+	if search.Description != "" {
+		q = q.Where("description ILIKE ?", "%"+search.Description+"%")
+	}
+
+	if search.Search != "" {
+		q = q.Where("title ILIKE ? OR description ILIKE ?", "%"+search.Search+"%", "%"+search.Search+"%")
+	}
+
+	// use offset and limit
+	postgres.Pagination(q, offsetLimit)
+
+	err := q.Find(&videos).Order("published_at DESC").Error
 	return videos, err
 }

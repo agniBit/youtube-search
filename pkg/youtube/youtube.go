@@ -1,6 +1,9 @@
 package youtube
 
 import (
+	"context"
+
+	"github.com/agniBit/youtube-search/type/common"
 	youtube_type "github.com/agniBit/youtube-search/type/youtube"
 	"github.com/agniBit/youtube-search/utl/config"
 	"github.com/jinzhu/copier"
@@ -15,10 +18,10 @@ func New(repository Repository, config *config.Configuration) youtube_type.Servi
 	return &YoutubeService{repository: repository, config: config}
 }
 
-func (yt *YoutubeService) SearchYoutubeVideosByName(name string) ([]*youtube_type.YoutubeVideo, error) {
+func (yt *YoutubeService) SearchYoutubeVideosByName(ctx context.Context, search *youtube_type.SearchFilter, offsetLimit *common.OffsetLimit) ([]*youtube_type.YoutubeVideo, error) {
 	videosT := []*youtube_type.YoutubeVideo{}
 
-	videos, err := yt.repository.FindVideosByVideoName(name)
+	videos, err := yt.repository.FindVideosByVideoName(search, offsetLimit)
 	if err != nil {
 		return nil, err
 	}

@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/agniBit/youtube-search/type/common"
 	"github.com/agniBit/youtube-search/utl/config"
 	_ "github.com/lib/pq"                                 // DB adapter
 	_ "github.com/newrelic/go-agent/v3/integrations/nrpq" // nrpostgres DB driver
@@ -42,4 +43,12 @@ func NewGormDB(dbConfig *config.Database) (*gorm.DB, error) {
 	}
 
 	return gdb, err
+}
+
+func Pagination(q *gorm.DB, offsetLimit *common.OffsetLimit) {
+	if offsetLimit.Limit == 0 {
+		offsetLimit.Limit = 10
+	}
+
+	q.Limit(offsetLimit.Limit).Offset(offsetLimit.Offset)
 }

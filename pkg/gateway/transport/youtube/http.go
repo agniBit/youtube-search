@@ -4,6 +4,8 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"github.com/agniBit/youtube-search/pkg/gateway"
+	"github.com/agniBit/youtube-search/type/common"
+	youtubeType "github.com/agniBit/youtube-search/type/youtube"
 )
 
 type HTTP struct {
@@ -20,9 +22,17 @@ func NewHTTP(svc gateway.Service, e *echo.Group) {
 }
 
 func (h *HTTP) searchYoutubeVideos(c echo.Context) error {
-	name := c.QueryParam("name")
+	search := &youtubeType.SearchFilter{}
+	if err := c.Bind(search); err != nil {
+		return err
+	}
 
-	videos, err := h.svc.SearchYoutubeVideosByName(name)
+	offsetLimit := &common.OffsetLimit{}
+	if err := c.Bind(offsetLimit); err != nil {
+		return err
+	}
+
+	videos, err := h.svc.SearchYoutubeVideosByName(c.Request().Context(), search, offsetLimit)
 	if err != nil {
 		return err
 	}
