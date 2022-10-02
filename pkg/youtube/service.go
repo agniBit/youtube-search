@@ -1,6 +1,10 @@
 package youtube
 
 type (
+	Repository interface {
+		FindVideosByVideoName(videoName string) ([]*YoutubeVideo, error)
+	}
+	
 	YoutubeVideo struct {
 		ID           string `gorm:"default:('yvd_' || generate_uid(12))"`
 		Title        string `gorm:"not null"`

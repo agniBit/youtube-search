@@ -1,28 +1,35 @@
 package api
 
 import (
-	"context"
-	"fmt"
-	"net/http"
-	"os"
-	"os/signal"
-	"time"
-
 	"github.com/labstack/echo/v4"
 
 	"github.com/agniBit/youtube-search/pkg/gateway"
 	"github.com/agniBit/youtube-search/pkg/gateway/transport"
 	"github.com/agniBit/youtube-search/pkg/youtube"
+	yt_repository "github.com/agniBit/youtube-search/pkg/youtube/repository/postgres"
 	utils "github.com/agniBit/youtube-search/utl/common"
 	"github.com/agniBit/youtube-search/utl/config"
+	"github.com/agniBit/youtube-search/utl/server"
+	"github.com/agniBit/youtube-search/utl/storage/postgres"
 )
 
 func Start(configPath string) error {
 	// Initialize cfg
 	cfg, err := config.Load(configPath)
+	// check error and panic in case of error
 	utils.CheckErr(err)
+
+	// initialize gorm db
+	db, err := postgres.NewGormDB(cfg.DB)
+	if err != nil {
+		return err
+	}
+
+	// initialize youtube repository
+	youtuebRepo := yt_repository.NewYoutubeRepository(db)
+
 	// Initialize youtube service
-	yt := youtube.New(cfg)
+	yt := youtube.New(youtuebRepo, cfg)
 
 	// Initialize gateway service
 	gw := gateway.New(yt)
@@ -30,38 +37,14 @@ func Start(configPath string) error {
 	// Initialize new echo server
 	e := echo.New()
 
+	// register all APIs in echo group as version 1 APIs
 	v1 := e.Group("/v1")
 
+	// register all HTTP APIs
 	transport.NewHTTP(gw, v1)
 
-	StartServer(e, cfg.Server)
+	// Start HTTP server
+	server.Start(e, cfg.Server)
 
 	return nil
-}
-
-func StartServer(e *echo.Echo, cfg *config.Server) {
-	s := &http.Server{
-		Addr: fmt.Sprintf(":%d", cfg.Port),
-	}
-	e.Debug = cfg.Debug
-
-	// Start server
-	go func() {
-		if err := e.StartServer(s); err != nil {
-			e.Logger.Info("Shutting down the server", err.Error())
-		}
-	}()
-
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 10 seconds.
-	quit := make(chan os.Signal)
-	signal.Notify(quit, os.Interrupt)
-
-	<-quit
-	// wait for some time to finish the old requests
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.Timeout)*time.Second)
-	defer cancel()
-	if err := e.Shutdown(ctx); err != nil {
-		e.Logger.Fatal(err)
-	}
 }
