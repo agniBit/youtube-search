@@ -1,0 +1,13 @@
+database:
+  url_path: postgresql://youtubeDB:password@localhost/youtube?sslmode=disable
+  log_queries: true
+  timeout_seconds: 30
+  max_idle_conns: 10
+
+server:
+  port: 8080
+  debug: true
+  timeout_seconds: 30
+
+youtube:
+  YOUTUBE_API_KEY: <YOUTUBE_API_KEY>
