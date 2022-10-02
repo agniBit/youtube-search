@@ -30,3 +30,7 @@ func (yt *YoutubeService) SearchYoutubeVideosByName(ctx context.Context, search 
 	err = copier.Copy(&videosT, &videos)
 	return videosT, err
 }
+
+func (yt *YoutubeService) FetchNewYoutubeVideos(ctx context.Context) error {
+	return nil
+}

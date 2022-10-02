@@ -14,6 +14,7 @@ type ( // Configuration holds data necessary for configuring application
 		Server  *Server   `yaml:"server,omitempty"`
 		DB      *Database `yaml:"database,omitempty"`
 		Youtube *Youtube  `yaml:"youtube,omitempty"`
+		Cron    *Cron     `yaml:"cron,omitempty"`
 	}
 
 	// Database holds data necessary for database configuration
@@ -33,6 +34,12 @@ type ( // Configuration holds data necessary for configuring application
 
 	Youtube struct {
 		APIKey string `yaml:"api_key,omitempty"`
+	}
+
+	Cron struct {
+		Youtube struct {
+			FetchNewVideosInterval int `yaml:"fetch_new_videos_interval,omitempty"`
+		} `yaml:"youtube,omitempty"`
 	}
 )
 

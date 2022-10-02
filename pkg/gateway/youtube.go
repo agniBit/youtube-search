@@ -10,3 +10,7 @@ import (
 func (g GatewayService) SearchYoutubeVideosByName(ctx context.Context, search *youtube_type.SearchFilter, offsetLimit *common.OffsetLimit) ([]*youtube_type.YoutubeVideo, error) {
 	return g.yt.SearchYoutubeVideosByName(ctx, search, offsetLimit)
 }
+
+func (g GatewayService) FetchNewYoutubeVideos(ctx context.Context) error {
+	return g.yt.FetchNewYoutubeVideos(ctx)
+}
