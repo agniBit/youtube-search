@@ -87,7 +87,7 @@ func Load(path string) (*Configuration, error) {
 		} else {
 			config.Youtube.APIKeys = keys
 		}
-	} else {
+	} else if config.Youtube == nil || len(config.Youtube.APIKeys) == 0 {
 		return nil, fmt.Errorf("youtube api key is not set")
 	}
 

@@ -1,0 +1,21 @@
+FROM golang:1.18-alpine as builder
+ENV CGO_ENABLED 0
+ENV GOOS linux
+ENV GOARCH arm64
+COPY go.mod go.sum //go/src/github.com/agniBit/youtube-search/
+WORKDIR /go/src/github.com/agniBit/youtube-search
+RUN go mod download
+COPY . /go/src/github.com/agniBit/youtube-search
+RUN go build -o bin/api/main /go/src/github.com/agniBit/youtube-search/cmd/api/main.go
+RUN go build -o bin/migration/main /go/src/github.com/agniBit/youtube-search/cmd/migration/migration.go
+
+FROM alpine
+RUN apk add --no-cache ca-certificates && update-ca-certificates
+COPY --from=builder /go/src/github.com/agniBit/youtube-search/bin/api/main /usr/bin/api/main
+COPY --from=builder /go/src/github.com/agniBit/youtube-search/bin/migration/main /usr/bin/migration/main
+COPY --from=builder /go/src/github.com/agniBit/youtube-search/cmd/config.local.yaml ./cmd/config.local.yaml
+COPY --from=builder /go/src/github.com/agniBit/youtube-search/cmd/migration/sql/setup.sql ./cmd/migration/sql/setup.sql
+RUN chmod +x /usr/bin/api/main
+RUN chmod +x /usr/bin/migration/main
+EXPOSE 8080
+ENTRYPOINT ["/usr/bin/api/main", "--migrate"]
