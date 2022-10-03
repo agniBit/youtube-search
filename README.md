@@ -48,5 +48,5 @@ curl --location --request GET '127.0.0.1:8081/v1/youtube/videos?limit=10&title=v
 
 Get 20 results, skip first 10 result order by publish date match by title of video
 ```
-curl --location --request GET '127.0.0.1:8081/v1/youtube/videos?offset=10&limit=10&title=virat'
+curl --location --request GET '127.0.0.1:8081/v1/youtube/videos?offset=10&limit=20&title=match'
 ```
