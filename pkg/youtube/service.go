@@ -22,11 +22,12 @@ type (
 	}
 
 	YoutubeVideo struct {
-		ID   string `gorm:"default:('yvd_' || generate_uid(12))"`
+		ID   string `gorm:"primaryKey;default:('yvd_' || generate_uid(12));not null"`
 		Etag string `gorm:"not null"`
 		Kind string
 		*YoutubeVideoID
 		*YoutubeVideoSnippet
+		Thumbnails []*YoutubeVideoThumbnails
 	}
 
 	YoutubeVideoID struct {
@@ -35,22 +36,22 @@ type (
 	}
 
 	YoutubeVideoSnippet struct {
-		ChannelId            string `json:"ChannelId"`
+		ChannelId            string
 		ChannelTitle         string
-		Description          string
+		Description          string `gorm:"not null"`
 		LiveBroadcastContent string
-		PublishedAt          time.Time
+		PublishedAt          time.Time `gorm:"index"`
 		Thumbnails           []*YoutubeVideoThumbnails
-		Title                string
+		Title                string `gorm:"not null"`
 	}
 
 	YoutubeVideoThumbnails struct {
-		ID             string `gorm:"default:('yvt_' || generate_uid(12))"`
-		ResolutionType ThumbnailType
+		ID             string        `gorm:"default:('yvt_' || generate_uid(12))"`
+		ResolutionType ThumbnailType `gorm:"not null"`
 		Height         int
 		Url            string
 		Width          int
-		YoutubeVideoID string
+		YoutubeVideoID string `gorm:"not null"`
 		YoutubeVideo   *YoutubeVideo
 	}
 
